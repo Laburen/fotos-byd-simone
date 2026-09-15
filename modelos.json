@@ -1,0 +1,297 @@
+{
+  "_doc": "Tabla de mapeo para estandarizar.py. A diferencia de fotos-dalian, aca la metadata sale del PATH (carpeta de modelo / carpeta de vista / carpeta de color), no del filename. El filename solo aporta el campo <detalle>.",
+  "_doc_modelos": "PENDIENTE: no existe todavia un prompt de BYD Simone, asi que los nombres de modelo salen del nombre de la carpeta. Cuando exista el prompt hay que re-atarlos a la lista literal de lead_model, igual que en fotos-dalian, y regenerar el catalogo.",
+  "carpetas": {
+    "atto 2": {
+      "token": "atto2",
+      "modelos": [
+        "BYD Atto 2"
+      ]
+    },
+    "dolphin mini": {
+      "token": "dolphinmini",
+      "modelos": [
+        "BYD Dolphin Mini"
+      ]
+    },
+    "seal 5": {
+      "token": "seal5",
+      "modelos": [
+        "BYD Seal 5"
+      ]
+    },
+    "seal u": {
+      "token": "sealu",
+      "modelos": [
+        "BYD Seal U"
+      ]
+    },
+    "shark": {
+      "token": "shark",
+      "modelos": [
+        "BYD Shark"
+      ]
+    },
+    "song pro": {
+      "token": "songpro",
+      "modelos": [
+        "BYD Song Pro"
+      ]
+    },
+    "ti7": {
+      "token": "ti7",
+      "modelos": [
+        "BYD Ti7"
+      ]
+    },
+    "yuan pro": {
+      "token": "yuanpro",
+      "modelos": [
+        "BYD Yuan Pro"
+      ]
+    }
+  },
+  "_doc_vistas": "Carpeta de nivel 2 -> (vista, color). 'color_desde_subcarpeta' significa que el color sale del nivel 3; si no hay nivel 3 el color queda en 'sd'. Un archivo suelto en la raiz del modelo (Shark) queda vista=sd color=sd.",
+  "vistas": {
+    "exterior": {
+      "vista": "exterior",
+      "color_desde_subcarpeta": true
+    },
+    "interior": {
+      "vista": "interior",
+      "color_desde_subcarpeta": true
+    },
+    "interior black": {
+      "vista": "interior",
+      "color": "black"
+    },
+    "interior gravel beige": {
+      "vista": "interior",
+      "color": "gravel-beige"
+    },
+    "detalles": {
+      "vista": "detalle",
+      "color": "sd"
+    }
+  },
+  "_doc_colores": "Normalizacion de nombres de color. 'Time Gray' (Yuan Pro) y 'Time Grey' (Atto 2, Song Pro) son la misma variante escrita distinto.",
+  "colores": {
+    "time gray": "time-grey"
+  },
+  "_doc_traduccion": "Se aplica al filename ANTES de trocear, de mas largo a mas corto. Los tokens chinos que describen la foto se traducen; la jerga de la web de BYD (pagina de opciones, banner de home, detalle de producto) y los nombres de color -que ya vienen de la carpeta- se mapean a vacio. El mojibake tambien. Los compuestos color+angulo van antes que los colores sueltos: '蓝45' es la vista 3/4 (diagonal, como en fotos-dalian) y '蓝侧' el perfil lateral; si se aplicara primero la regla del color quedaria un '45' suelto que el troceo descarta por ser puro digito.",
+  "traduccion": [
+    [
+      "官网配图产品想详情页banner图",
+      " "
+    ],
+    [
+      "官网配图产品详情页minor part",
+      " "
+    ],
+    [
+      "官网配图产品详情页",
+      " "
+    ],
+    [
+      "官网配图首页banner图",
+      " "
+    ],
+    [
+      "官网配图选配页",
+      " "
+    ],
+    [
+      "车尾灯",
+      " luz-trasera "
+    ],
+    [
+      "前侧",
+      " frente-lateral "
+    ],
+    [
+      "俯视",
+      " vista-superior "
+    ],
+    [
+      "内饰",
+      " interior "
+    ],
+    [
+      "车尾",
+      " trasero "
+    ],
+    [
+      "蓝45",
+      " diagonal "
+    ],
+    [
+      "蓝侧",
+      " lateral "
+    ],
+    [
+      "黑45",
+      " diagonal "
+    ],
+    [
+      "黑侧",
+      " lateral "
+    ],
+    [
+      "白45",
+      " diagonal "
+    ],
+    [
+      "白侧",
+      " lateral "
+    ],
+    [
+      "灰45",
+      " diagonal "
+    ],
+    [
+      "灰侧",
+      " lateral "
+    ],
+    [
+      "绿45",
+      " diagonal "
+    ],
+    [
+      "绿侧",
+      " lateral "
+    ],
+    [
+      "拷贝",
+      " "
+    ],
+    [
+      "湖绿",
+      " "
+    ],
+    [
+      "侧",
+      " lateral "
+    ],
+    [
+      "黑",
+      " "
+    ],
+    [
+      "白",
+      " "
+    ],
+    [
+      "灰",
+      " "
+    ],
+    [
+      "绿",
+      " "
+    ],
+    [
+      "蓝",
+      " "
+    ],
+    [
+      "┐¢▒┤",
+      " "
+    ],
+    [
+      "íó",
+      " "
+    ],
+    [
+      "45°",
+      " diagonal "
+    ]
+  ],
+  "_doc_normalizacion": "Correcciones de texto sobre el filename ya en minuscula. 'tii 7' es un typo por 'ti 7' en los 12 archivos del Ti7.",
+  "normalizacion": [
+    [
+      "tii 7",
+      "ti7"
+    ],
+    [
+      "ti 7",
+      "ti7"
+    ],
+    [
+      "dolphin suer",
+      "dolphin surf"
+    ]
+  ],
+  "_doc_stopwords": "Palabras que se descartan al armar el campo <detalle>. Tres grupos: nombres de modelo/marca, ruido de export (download, rgb, psd, copia) y jerga de la web de BYD (banner, homepage, mob, pc) que no describe la foto. Los colores van aca porque el color ya es un campo propio que sale de la carpeta.",
+  "stopwords": [
+    "byd",
+    "atto",
+    "dmi",
+    "dolphin",
+    "surf",
+    "suer",
+    "song",
+    "pro",
+    "yuan",
+    "ti",
+    "ti7",
+    "tii",
+    "int",
+    "seal",
+    "shark",
+    "songpro",
+    "download",
+    "lhd",
+    "rgb",
+    "psd",
+    "psb",
+    "jpg",
+    "jpeg",
+    "png",
+    "copia",
+    "de",
+    "of",
+    "h",
+    "ft",
+    "mod",
+    "kv",
+    "pic",
+    "image",
+    "inch",
+    "mob",
+    "pc",
+    "banner",
+    "homepage",
+    "minor",
+    "part",
+    "scenario",
+    "braapedro",
+    "black",
+    "white",
+    "blue",
+    "green",
+    "gray",
+    "grey",
+    "midnight",
+    "skiing",
+    "apricity",
+    "glacier",
+    "obsidian",
+    "sprout",
+    "atlantis",
+    "snow",
+    "malachite",
+    "darkcyan",
+    "smoke",
+    "gravel",
+    "beige",
+    "time"
+  ],
+  "_doc_sin_fotos": "Modelos con carpeta pero sin ninguna foto. El catalogo les escribe la seccion con el aviso para que el agente no ofrezca lo que no existe.",
+  "sin_fotos": [
+    "BYD Seal 5"
+  ],
+  "_doc_resize": "Las fotos crudas son masters de imprenta (hasta 17730x9974 px / 66 MB) y 35 superan los 20 MB que es el limite por archivo de jsDelivr. Se redimensionan con sips al lado largo, sin recorte: la proporcion y el encuadre quedan intactos. Los PNG se mantienen PNG porque 3 de los 4 tienen canal alpha y pasarlos a JPEG les pondria fondo negro.",
+  "resize": {
+    "lado_largo_px": 2000,
+    "calidad_jpeg": 85
+  }
+}
