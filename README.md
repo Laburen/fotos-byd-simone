@@ -112,6 +112,7 @@ pasa entero por `RE_LIMPIO` en `validar()`.
 | | |
 |---|---|
 | `fotos/` | 193 archivos, una sola carpeta plana, 90 MB. Es lo que se sube al repo. |
+| `fichas/` | Una ficha técnica en PDF por modelo, 7 archivos, 50 MB. Ver "Fichas técnicas". |
 | `origen/` | Carpetas crudas tal como llegan, 2.0 GB. **Fuera de git** (`.gitignore`). |
 | `inventario.csv` | 193 filas: nombre · modelo · vista · color · detalle · origen · md5 · dimensiones · bytes antes y después. |
 | `modelos.json` | Mapeo carpeta→modelo, vistas, colores, traducción del chino, stopwords. |
@@ -120,6 +121,45 @@ pasa entero por `RE_LIMPIO` en `validar()`.
 | `catalogos/` | Un `.md` + un `.pdf` **por fecha de generación**. El `.pdf` del día es lo que se sube a la KB. |
 
 `inventario.csv` es la fuente del catálogo PDF y lo que hace todo esto auditable.
+
+## Fichas técnicas
+
+`fichas/` tiene la ficha técnica oficial de cada modelo, una por modelo (no por versión: la del
+Song Pro y la del Dolphin Mini cubren GL y GS en el mismo PDF). El agente las manda con
+`send_files` cuando la persona elige un modelo, y las URLs van **escritas en el prompt**, en
+`<modelos_disponibles>`: son ocho, no hace falta buscarlas en la KB como las fotos.
+
+```
+byd_<modelo>_ficha-tecnica.pdf
+```
+
+`<modelo>` usa los mismos códigos que las fotos (`atto2`, `dolphinmini`, `seal5`, `sealu`, `shark`,
+`songpro`, `ti7`, `yuanpro`). La URL es la de jsDelivr, igual que las fotos:
+
+```
+https://cdn.jsdelivr.net/gh/Laburen/fotos-byd-simone/fichas/byd_<modelo>_ficha-tecnica.pdf
+```
+
+**jsDelivr y no `raw.githubusercontent.com`**: raw sirve los PDF como `application/octet-stream`, y
+jsDelivr como `application/pdf`. Para que WhatsApp lo muestre como documento importa el tipo.
+
+**Tope de 20 MB por archivo**: jsDelivr no sirve archivos más grandes desde GitHub. La del Atto 2
+venía de 25,8 MB y se comprimió a 14 MB bajando las imágenes a 150 dpi (calidad JPEG 75) con
+PyMuPDF; el texto y las tablas siguen siendo vectoriales. Las otras seis van tal cual llegaron.
+
+| Modelo | Archivo | Tamaño |
+|---|---|---|
+| BYD Atto 2 | `byd_atto2_ficha-tecnica.pdf` | 14,1 MB (comprimida) |
+| BYD Dolphin Mini | `byd_dolphinmini_ficha-tecnica.pdf` | 8,3 MB |
+| BYD Seal 5 | `byd_seal5_ficha-tecnica.pdf` | 4,3 MB |
+| BYD Shark | `byd_shark_ficha-tecnica.pdf` | 3,3 MB |
+| BYD Song Pro | `byd_songpro_ficha-tecnica.pdf` | 4,9 MB |
+| BYD Ti7 | `byd_ti7_ficha-tecnica.pdf` | 7,4 MB |
+| BYD Yuan Pro | `byd_yuanpro_ficha-tecnica.pdf` | 8,2 MB |
+| **BYD Seal U** | — | **pendiente: BYD no la mandó todavía** |
+
+Para agregar o reemplazar una: copiala a `fichas/` con el nombre de la convención, chequeá que pese
+menos de 20 MB, pusheá y verificá la URL con `curl -sI` (tiene que dar 200 y `application/pdf`).
 
 ## Cómo agregar fotos nuevas
 
