@@ -145,7 +145,7 @@ jsDelivr como `application/pdf`. Para que WhatsApp lo muestre como documento imp
 
 **Tope de 20 MB por archivo**: jsDelivr no sirve archivos más grandes desde GitHub. La del Atto 2
 venía de 25,8 MB y se comprimió a 14 MB bajando las imágenes a 150 dpi (calidad JPEG 75) con
-PyMuPDF; el texto y las tablas siguen siendo vectoriales. Las otras seis van tal cual llegaron.
+PyMuPDF; el texto y las tablas siguen siendo vectoriales. Las otras siete van tal cual llegaron.
 
 | Modelo | Archivo | Tamaño |
 |---|---|---|
