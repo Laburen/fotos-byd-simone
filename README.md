@@ -112,7 +112,7 @@ pasa entero por `RE_LIMPIO` en `validar()`.
 | | |
 |---|---|
 | `fotos/` | 196 archivos, una sola carpeta plana, 90 MB. Es lo que se sube al repo. |
-| `fichas/` | Una ficha técnica en PDF por modelo, 7 archivos, 50 MB. Ver "Fichas técnicas". |
+| `fichas/` | Una ficha técnica en PDF por modelo, 8 archivos, 51 MB. Ver "Fichas técnicas". |
 | `origen/` | Carpetas crudas tal como llegan, 2.0 GB. **Fuera de git** (`.gitignore`). |
 | `inventario.csv` | 196 filas: nombre · modelo · vista · color · detalle · origen · md5 · dimensiones · bytes antes y después. |
 | `modelos.json` | Mapeo carpeta→modelo, vistas, colores, traducción del chino, stopwords. |
@@ -156,7 +156,7 @@ PyMuPDF; el texto y las tablas siguen siendo vectoriales. Las otras seis van tal
 | BYD Song Pro | `byd_songpro_ficha-tecnica.pdf` | 4,9 MB |
 | BYD Ti7 | `byd_ti7_ficha-tecnica.pdf` | 7,4 MB |
 | BYD Yuan Pro | `byd_yuanpro_ficha-tecnica.pdf` | 8,2 MB |
-| **BYD Seal U** | — | **pendiente: BYD no la mandó todavía** |
+| BYD Seal U | `byd_sealu_ficha-tecnica.pdf` | 0,3 MB |
 
 Para agregar o reemplazar una: copiala a `fichas/` con el nombre de la convención, chequeá que pese
 menos de 20 MB, pusheá y verificá la URL con `curl -sI` (tiene que dar 200 y `application/pdf`).
