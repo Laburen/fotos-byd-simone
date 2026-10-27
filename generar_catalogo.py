@@ -27,6 +27,7 @@ import os
 import re
 import subprocess
 import sys
+import time
 from collections import defaultdict, OrderedDict
 
 # ---------------------------------------------------------------- CONFIG
@@ -69,23 +70,32 @@ NOMBRE_VISTA = {"exterior": "Exterior", "interior": "Interior",
 CHROME = ("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
           "/Applications/Brave Browser.app/Contents/MacOS/Brave Browser")
 
-# Medido en Chrome (el mismo motor que imprime el PDF): en Menlo a 6.5pt cada
-# char ocupa 1.379mm. A4 con margenes laterales de 9mm deja 192mm utiles, o sea
-# que entran 139 chars. Se avisa a partir de 134 para tener aire.
+# Medido en Chrome (el mismo motor que imprime el PDF): en Menlo a 6.2pt cada
+# char ocupa 1.316mm. A4 con margenes laterales de 9mm deja 192mm utiles, o sea
+# que entran 145 chars.
+#
+# El tope es 139 y no es arbitrario: la base con "@main" mide 64 chars y
+# estandarizar.py garantiza nombres de <= 75, asi que 64 + 75 = 139 es el peor
+# caso estructural. El PDF banca 145, o sea que hay 6 chars de aire.
 #
 # fotos-dalian usa 7.5pt y tope 112, pero aca las URLs son mas largas: el repo
-# tiene 4 chars mas que "fotos-dalian" y el nombre tiene 5 campos en vez de 4.
-# A 7.5pt la mas larga (130 chars) ocupa 207mm y se partiria en dos lineas, que
-# es justo lo que rompe la extraccion en la KB.
-MAX_CHARS_URL = 134
+# tiene 4 chars mas que "fotos-dalian", la rama va explicita y el nombre tiene 5
+# campos en vez de 4. A 7.5pt la mas larga ocupa 215mm y se partiria en dos
+# lineas, que es justo lo que rompe la extraccion en la KB.
+MAX_CHARS_URL = 139
 
 
 def base_url():
     if URL_STYLE == "raw":
         return "https://raw.githubusercontent.com/%s/%s/%s/" % (GITHUB_USER, REPO, BRANCH)
     if URL_STYLE == "jsdelivr":
-        # sin @version: resuelve a la rama por defecto del repo
-        return "https://cdn.jsdelivr.net/gh/%s/%s/" % (GITHUB_USER, REPO)
+        # La rama va EXPLICITA. Sin "@rama" jsDelivr primero tiene que resolver
+        # cual es la default branch, y esa consulta de metadata la cachea: como
+        # el repo arranco privado, jsDelivr se guardo un "no puedo resolver
+        # versiones" y despues de hacerlo publico seguia devolviendo 404 en las
+        # 193 URLs ("Failed to fetch version info"). Con "@main" no hay nada que
+        # resolver y sirve el archivo directo.
+        return "https://cdn.jsdelivr.net/gh/%s/%s@%s/" % (GITHUB_USER, REPO, BRANCH)
     if URL_STYLE == "pages":
         return "https://%s.github.io/%s/" % (GITHUB_USER.lower(), REPO)
     sys.exit("URL_STYLE desconocido: %s" % URL_STYLE)
@@ -238,9 +248,9 @@ section { margin-bottom: 4mm; }
 .foto { margin-bottom: 2.2mm; page-break-inside: avoid; }
 .lbl { font-weight: 600; font-size: 9.5pt; }
 /* nowrap es lo que importa: una URL partida en dos lineas la extrae mal el
-   parser de la KB y send_files recibe una URL rota. El 6.5pt sale de medir:
-   la URL mas larga (130 chars) ocupa 179mm de los 192mm utiles. */
-.url { font-family: "SF Mono", Menlo, monospace; font-size: 6.5pt;
+   parser de la KB y send_files recibe una URL rota. El 6.2pt sale de medir:
+   la URL mas larga (135 chars) ocupa 178mm de los 192mm utiles. */
+.url { font-family: "SF Mono", Menlo, monospace; font-size: 6.2pt;
        color: #14418b; white-space: nowrap; }
 .fin { font-size: 8.5pt; color: #666; font-style: italic; margin-top: 2mm; }
 .aviso h2 { background: #c22; }
@@ -347,23 +357,39 @@ def verificar():
     _, filas = leer_inventario()
     urls = sorted({url_de(r["nombre_nuevo"]) for r in filas})
     print("Verificando %d URLs contra %s\n" % (len(urls), base_url()))
-    fallas = []
-    for i, u in enumerate(urls, 1):
+    # jsDelivr tira 403 si le pegas 193 veces seguidas. Ese 403 es rate limit
+    # del verificador, no un problema de la URL: sin el reintento el script
+    # reporta fallas que no existen.
+    def probar(u):
         r = subprocess.run(["curl", "-sIL", "-o", "/dev/null",
                             "-w", "%{http_code} %{content_type}", u],
                            capture_output=True, text=True)
         code, _, ctype = r.stdout.partition(" ")
+        return code, ctype.strip() or "?"
+
+    fallas = []
+    for i, u in enumerate(urls, 1):
+        code, ctype = probar(u)
+        for espera in (2, 5, 10):          # solo el rate limit se reintenta
+            if code != "403":
+                break
+            time.sleep(espera)
+            code, ctype = probar(u)
         bien = code == "200" and ctype.startswith("image/")
         if not bien:
-            fallas.append((u, code, ctype.strip() or "?"))
+            fallas.append((u, code, ctype))
         print("\r  %d/%d  %s" % (i, len(urls), "OK" if bien else "FALLA"), end="", flush=True)
+        time.sleep(0.15)                   # ritmo que jsDelivr tolera
     print("\n")
     if fallas:
         print("  %d de %d FALLARON:" % (len(fallas), len(urls)))
         for u, code, ctype in fallas:
             print("    HTTP %s  %s  %s" % (code, ctype, u))
-        print("\n  Si dan 404: el repo esta privado o todavia no se pusheo.")
-        print("  Dale unos minutos: jsDelivr re-arma su cache despues de cada push.")
+        print("\n  404 -> el repo esta privado, no se pusheo, o jsDelivr cacheo un")
+        print("         'no existe' de cuando el repo era privado. Por eso la URL")
+        print("         lleva @%s explicito: sin la rama, jsDelivr primero tiene" % BRANCH)
+        print("         que resolver la version y esa consulta se cachea aparte.")
+        print("  403 -> rate limit de jsDelivr, ya se reintento 3 veces. Volve a correr.")
         sys.exit(1)
     print("  %d/%d en HTTP 200 con content-type de imagen." % (len(urls), len(urls)))
 
