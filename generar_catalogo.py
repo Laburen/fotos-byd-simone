@@ -60,7 +60,7 @@ FECHA_TEXTO = HOY.strftime("%d/%m/%Y")
 
 # Modelos que tienen carpeta pero ninguna foto. Van avisados en el catalogo
 # para que el agente no ofrezca lo que no existe.
-SIN_FOTOS = ["BYD Seal 5"]
+SIN_FOTOS = []
 
 # orden de presentacion: primero lo que mas se pide
 ORDEN_VISTA = {"exterior": 0, "interior": 1, "detalle": 2, "sd": 3}

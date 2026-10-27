@@ -111,10 +111,10 @@ pasa entero por `RE_LIMPIO` en `validar()`.
 
 | | |
 |---|---|
-| `fotos/` | 193 archivos, una sola carpeta plana, 90 MB. Es lo que se sube al repo. |
+| `fotos/` | 196 archivos, una sola carpeta plana, 90 MB. Es lo que se sube al repo. |
 | `fichas/` | Una ficha técnica en PDF por modelo, 7 archivos, 50 MB. Ver "Fichas técnicas". |
 | `origen/` | Carpetas crudas tal como llegan, 2.0 GB. **Fuera de git** (`.gitignore`). |
-| `inventario.csv` | 193 filas: nombre · modelo · vista · color · detalle · origen · md5 · dimensiones · bytes antes y después. |
+| `inventario.csv` | 196 filas: nombre · modelo · vista · color · detalle · origen · md5 · dimensiones · bytes antes y después. |
 | `modelos.json` | Mapeo carpeta→modelo, vistas, colores, traducción del chino, stopwords. |
 | `estandarizar.py` | El script. Solo stdlib + `sips` (viene con macOS). |
 | `generar_catalogo.py` | Lee el inventario → arma las URLs de jsDelivr → `catalogos/*.md` + `*.pdf`. |
@@ -210,7 +210,7 @@ Si generás dos veces el mismo día se pisa el archivo de ese día, que es lo qu
 
 ## Estado
 
-**194 archivos en origen → 193 en `fotos/` + 1 duplicado exacto descartado + 0 en POR-REVISAR.**
+**197 archivos en origen → 196 en `fotos/` + 1 duplicado exacto descartado + 0 en POR-REVISAR.**
 
 | Modelo | Fotos |
 |---|---|
@@ -221,13 +221,16 @@ Si generás dos veces el mismo día se pisa el archivo de ese día, que es lo qu
 | BYD Dolphin Mini | 26 |
 | BYD Shark | 6 |
 | BYD Seal U | 4 |
-| **BYD Seal 5** | **0 — sin ninguna foto** |
+| BYD Seal 5 | 3 |
 
-`BYD Seal 5` tiene carpeta pero está vacía. Se cubre desde el **catálogo**: `generar_catalogo.py`
-le escribe su propia sección con el aviso de que no hay fotos y de que no las ofrezca (ver
-`SIN_FOTOS` en el script y `sin_fotos` en `modelos.json`). Como el agente tiene que buscar en la
-KB antes de mandar nada, se encuentra con el aviso en vez de con URLs. Si algún día aparecen
-fotos del Seal 5, sacalo de las dos listas.
+El Seal 5 llegó el 27/10/2026 con 3 exteriores, una por color (azul, gris, blanco), sin nombres
+oficiales de BYD: el color quedó en castellano. Dos venían en PNG con fondo transparente y se
+aplanaron a JPG sobre blanco **antes** de entrar a `origen/`, porque WhatsApp puede mostrar la
+transparencia en negro. Por eso esas dos son la única excepción a "origen queda tal como llega".
+
+Un modelo con carpeta y sin fotos se cubre desde el **catálogo**: se agrega a `SIN_FOTOS` en
+`generar_catalogo.py` y a `sin_fotos` en `modelos.json`, y el catálogo le escribe una sección con
+el aviso de que no hay fotos. Hoy las dos listas están vacías.
 
 ### Pendientes conocidos
 
@@ -245,5 +248,5 @@ fotos del Seal 5, sacalo de las dos listas.
   lista en cada corrida.
 - **19 fotos del Dolphin Mini** tienen filename `DOLPHIN SURF` / `DOLPHIN SUER` (el nombre
   internacional del modelo). Se toman como Dolphin Mini por el path.
-- **Carpetas vacías** que el script ignora: `Seal 5/`, `Atto 2/Exterior/Obsidian Black/`,
+- **Carpetas vacías** que el script ignora: `Atto 2/Exterior/Obsidian Black/`,
   `Atto 2/Exterior/Time Grey/`, `Dolphin Mini/Interior/`, `Song Pro/Interior Black/`.

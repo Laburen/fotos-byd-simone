@@ -286,9 +286,7 @@
     "time"
   ],
   "_doc_sin_fotos": "Modelos con carpeta pero sin ninguna foto. El catalogo les escribe la seccion con el aviso para que el agente no ofrezca lo que no existe.",
-  "sin_fotos": [
-    "BYD Seal 5"
-  ],
+  "sin_fotos": [],
   "_doc_resize": "Las fotos crudas son masters de imprenta (hasta 17730x9974 px / 66 MB) y 35 superan los 20 MB que es el limite por archivo de jsDelivr. Se redimensionan con sips al lado largo, sin recorte: la proporcion y el encuadre quedan intactos. Los PNG se mantienen PNG porque 3 de los 4 tienen canal alpha y pasarlos a JPEG les pondria fondo negro.",
   "resize": {
     "lado_largo_px": 2000,
